@@ -13,7 +13,7 @@
             </asp:RadioButtonList>
             <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" ControlToValidate="rblMovies" ErrorMessage="Select movie">Please select movie</asp:RequiredFieldValidator>
             <br />
-            <asp:Button ID="btnView" runat="server" OnClick="btnView_Click" Text="View" />
+            <asp:Button ID="btnView" runat="server" OnClick="btnView_Click" Text="Explore" />
         </div>
     </form>
 </body>

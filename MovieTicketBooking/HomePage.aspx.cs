@@ -40,9 +40,10 @@ namespace MovieTicketBooking
 
         protected void btnView_Click(object sender, EventArgs e)
         {
-                string selectedMovie = rblMovies.SelectedItem.Text;
-
-                Session["SelectedMovie"] = selectedMovie;
+                string selectedMovieName = rblMovies.SelectedItem.Text;
+                String selectedMovieId=rblMovies.SelectedValue;
+                Session["MovieName"] = selectedMovieName;
+                Session["MovieId"] = selectedMovieId;
 
                 Response.Redirect("Schedule.aspx");
         }
