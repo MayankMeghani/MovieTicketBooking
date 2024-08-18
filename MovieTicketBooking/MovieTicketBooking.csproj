@@ -67,15 +67,34 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="AddMovieForm.aspx" />
     <Content Include="App_Data\Database.mdf" />
     <Content Include="App_Data\Database_log.ldf">
       <DependentUpon>Database.mdf</DependentUpon>
     </Content>
+    <Content Include="Bookings.aspx" />
     <Content Include="HomePage.aspx" />
+    <Content Include="MovieSchedule.aspx" />
     <Content Include="Schedule.aspx" />
+    <Content Include="TicketBooking.aspx" />
+    <Content Include="UpdateMovieForm.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AddMovieForm.aspx.cs">
+      <DependentUpon>AddMovieForm.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AddMovieForm.aspx.designer.cs">
+      <DependentUpon>AddMovieForm.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Bookings.aspx.cs">
+      <DependentUpon>Bookings.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Bookings.aspx.designer.cs">
+      <DependentUpon>Bookings.aspx</DependentUpon>
+    </Compile>
     <Compile Include="HomePage.aspx.cs">
       <DependentUpon>HomePage.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -83,13 +102,34 @@
     <Compile Include="HomePage.aspx.designer.cs">
       <DependentUpon>HomePage.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Schedule.aspx.cs">
       <DependentUpon>Schedule.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Schedule.aspx.designer.cs">
       <DependentUpon>Schedule.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="TicketBooking.aspx.cs">
+      <DependentUpon>TicketBooking.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="TicketBooking.aspx.designer.cs">
+      <DependentUpon>TicketBooking.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="MovieSchedule.aspx.cs">
+      <DependentUpon>MovieSchedule.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="MovieSchedule.aspx.designer.cs">
+      <DependentUpon>MovieSchedule.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="UpdateMovieForm.aspx.cs">
+      <DependentUpon>UpdateMovieForm.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="UpdateMovieForm.aspx.designer.cs">
+      <DependentUpon>UpdateMovieForm.aspx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>

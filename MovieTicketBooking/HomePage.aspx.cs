@@ -41,11 +41,11 @@ namespace MovieTicketBooking
         protected void btnView_Click(object sender, EventArgs e)
         {
                 string selectedMovieName = rblMovies.SelectedItem.Text;
-                String selectedMovieId=rblMovies.SelectedValue;
+                string selectedMovieId=rblMovies.SelectedValue;
                 Session["MovieName"] = selectedMovieName;
                 Session["MovieId"] = selectedMovieId;
 
-                Response.Redirect("Schedule.aspx");
+                Response.Redirect("MovieSchedule.aspx");
         }
 
     }

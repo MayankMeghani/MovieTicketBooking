@@ -9,34 +9,33 @@ using System.Web.UI.WebControls;
 
 namespace MovieTicketBooking
 {
-    public partial class Schedule : System.Web.UI.Page
+    public partial class Schedule1 : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            string MovieName = Session["MovieName"].ToString();
-            int MovieId = int.Parse(Session["MovieId"].ToString());
-            lblTitle.Text =  string.Format(@"Schedule for Movie: {0}",MovieName);
-            SqlConnection con = new SqlConnection();
-            con.ConnectionString = WebConfigurationManager.ConnectionStrings["MovieDbContext"].ConnectionString;
-            SqlCommand cmd = con.CreateCommand();
-            cmd.CommandText = $"Select ShowTimeId,ScreenId,StartTime from ShowTimes where MovieId = {MovieId}";
-            con.Open();
-            SqlDataReader reader = cmd.ExecuteReader();
-            gdvSchedule.DataSource = reader;
-            gdvSchedule.DataBind();
+            if (!IsPostBack)
+            {
+                BindScheduleGrid();
+            }
+        }
+        private void BindScheduleGrid()
+        {
+            string connectionString = WebConfigurationManager.ConnectionStrings["MovieDbContext"].ConnectionString;
+            string query = @"SELECT ms.MovieScheduleID, m.Title, m.Duration, s.ScreenName, s.Capacity,  ms.StartTime, ms.BookedSeats, ms.HouseFull FROM MovieSchedules ms 
+            JOIN  Movies m ON ms.MovieId=m.MovieId
+            JOIN Screens s ON ms.ScreenId=s.ScreenId";
+            using (SqlConnection con = new SqlConnection(connectionString))
+            using (SqlCommand cmd = new SqlCommand(query, con))
+            {
+                con.Open();
+                gdvSchedule.DataSource = cmd.ExecuteReader();
+                gdvSchedule.DataBind();
+                con.Close();
+            }
 
         }
-
         protected void gdvSchedule_SelectedIndexChanged(object sender, EventArgs e)
         {
-        }
-
-        protected void btnClick(object sender, GridViewCommandEventArgs e)
-        {
-            if (e.CommandName == "checkAvailability")
-            {
-                lblTitle.Text = "available";
-            }
 
         }
     }

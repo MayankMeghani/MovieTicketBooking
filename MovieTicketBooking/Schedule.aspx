@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Schedule.aspx.cs" Inherits="MovieTicketBooking.Schedule" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Schedule.aspx.cs" Inherits="MovieTicketBooking.Schedule1" %>
 
 <!DOCTYPE html>
 
@@ -9,22 +9,21 @@
 <body>
     <form id="form1" runat="server">
         <div>
-            <asp:Label ID="lblTitle" runat="server" Text="Label"></asp:Label>
-            <asp:GridView ID="gdvSchedule" runat="server" OnSelectedIndexChanged="gdvSchedule_SelectedIndexChanged" BackColor="White" BorderColor="#336666" BorderStyle="Double" BorderWidth="3px" CellPadding="4" GridLines="Horizontal" OnRowCommand="btnClick" >
+            <asp:Label ID="lblSchedule" runat="server" Text="Schedule"></asp:Label>
+            <br />
+            <asp:GridView ID="gdvSchedule" runat="server" BackColor="White" BorderColor="White" BorderStyle="Ridge" BorderWidth="2px" CellPadding="3" CellSpacing="1" GridLines="None" OnSelectedIndexChanged="gdvSchedule_SelectedIndexChanged">
                 <Columns>
-                    <asp:ButtonField AccessibleHeaderText="checkBtn" ButtonType="Button" Text="Check Availability" CommandName="checkAvailability" />
-                    <asp:DynamicField AccessibleHeaderText="dynamicText" DataField="none" />
+                    <asp:ButtonField ButtonType="Button" CommandName="update" Text="Update" />
                 </Columns>
-               <FooterStyle BackColor="White" ForeColor="#333333" />
-                <HeaderStyle BackColor="#336666" Font-Bold="True" ForeColor="White" />
-                <PagerStyle BackColor="#336666" ForeColor="White" HorizontalAlign="Center" />
-                <RowStyle BackColor="White" ForeColor="#333333" />
-                <SelectedRowStyle BackColor="#339966" Font-Bold="True" ForeColor="White" />
-                <SortedAscendingCellStyle BackColor="#F7F7F7" />
-                <SortedAscendingHeaderStyle BackColor="#487575" />
-                <SortedDescendingCellStyle BackColor="#E5E5E5" />
-                <SortedDescendingHeaderStyle BackColor="#275353" />
-                
+                <FooterStyle BackColor="#C6C3C6" ForeColor="Black" />
+                <HeaderStyle BackColor="#4A3C8C" Font-Bold="True" ForeColor="#E7E7FF" />
+                <PagerStyle BackColor="#C6C3C6" ForeColor="Black" HorizontalAlign="Right" />
+                <RowStyle BackColor="#DEDFDE" ForeColor="Black" />
+                <SelectedRowStyle BackColor="#9471DE" Font-Bold="True" ForeColor="White" />
+                <SortedAscendingCellStyle BackColor="#F1F1F1" />
+                <SortedAscendingHeaderStyle BackColor="#594B9C" />
+                <SortedDescendingCellStyle BackColor="#CAC9C9" />
+                <SortedDescendingHeaderStyle BackColor="#33276A" />
             </asp:GridView>
         </div>
     </form>
