@@ -16,29 +16,55 @@ namespace MovieTicketBooking
         {
             if (!IsPostBack)
             {
-                BindBookingsGrid();
+                string role = Session["Role"] != null ? Session["Role"].ToString().Trim() : string.Empty;
+                BindBookingsGrid(role);
 
-                BindScreensDropDown();
-                
+
             }
 
         }
 
-        private void BindBookingsGrid()
+        private void BindBookingsGrid(string role)
         {
             string connectionString = WebConfigurationManager.ConnectionStrings["MovieDbContext"].ConnectionString;
-            string query = @"
+
+            string query;
+            if (role == "admin")
+            {
+                query = @"
+                SELECT b.BookingId,u.Name As UserName, m.Title, ScreenName , b.StartTime,b.NoOfSeats,b.Status
+                FROM Bookings b
+                JOIN Movies m ON b.MovieId = m.MovieId
+                JOIN Users u ON u.Id = b.UserId";
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    con.Open();
+                    gdvBookings.DataSource = cmd.ExecuteReader();
+                    gdvBookings.DataBind();
+                    con.Close();
+                    BindScreensDropDown();
+                }
+            }
+            else
+            {
+                query = @"
                 SELECT b.BookingId, m.Title, ScreenName , b.StartTime,b.NoOfSeats,b.Status
                 FROM Bookings b
-                JOIN Movies m ON b.MovieId = m.MovieId";
-            using(SqlConnection con = new SqlConnection(connectionString))
-            using (SqlCommand cmd = new SqlCommand(query, con))
-            {
-                con.Open();
-                gdvBookings.DataSource = cmd.ExecuteReader();
-                gdvBookings.DataBind();
-                con.Close();
+                JOIN Movies m ON b.MovieId = m.MovieId WHERE b.UserId=@UserId";
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    cmd.Parameters.AddWithValue("@UserId", Convert.ToInt32(Session["UserID"]));
+                    con.Open();
+                    gdvBookings.DataSource = cmd.ExecuteReader();
+                    gdvBookings.DataBind();
+                    con.Close();
+                }
             }
+
 
         }
         private void BindScreensDropDown()
@@ -60,9 +86,6 @@ namespace MovieTicketBooking
 
         }
 
-        protected void GridView1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-        }
 
         protected void btn_clk_update(object sender, EventArgs e)
         {
@@ -81,7 +104,7 @@ namespace MovieTicketBooking
                 cmd.Parameters.AddWithValue("@startTime", startTime);
                 cmd.Parameters.AddWithValue("@status", status);
                 cmd.Parameters.AddWithValue("@bookingId", bookingId);
-                con.Open() ;
+                con.Open();
                 int res = cmd.ExecuteNonQuery();
                 panelModify.Visible = false;
                 if (res > 0)
@@ -124,18 +147,34 @@ namespace MovieTicketBooking
                     con.Close();
 
                 }
-                
+
                 lblTxt.Text = "Updating Booking with id: " + bookingId.ToString();
 
-                
+
                 panelModify.Visible = true;
             }
         }
 
-        
+
         protected void btn_clk_add(object sender, EventArgs e)
         {
 
         }
+
+        protected void gdvBookings_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+            if (e.Row.RowType == DataControlRowType.DataRow)
+            {
+                string role = Session["Role"] != null ? Session["Role"].ToString().Trim() : string.Empty;
+
+                bool userIsAdmin = role == "admin";
+
+                if (!userIsAdmin)
+                {
+                    e.Row.Cells[0].Visible = false;
+                }
+            }
+        }
+
     }
 }

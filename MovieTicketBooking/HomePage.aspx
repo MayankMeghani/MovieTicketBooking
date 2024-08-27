@@ -9,6 +9,11 @@
 <body style="height: 299px">
     <form id="form1" runat="server">
         <div accesskey="rblMovie">
+            <asp:Label ID="lblWelcome" runat="server" Text="Label"></asp:Label>
+            <br />
+            <br />
+            <asp:Label ID="lblHeading" runat="server" Text="Movies"></asp:Label>
+            <br />
             <asp:RadioButtonList ID="rblMovies" runat="server" OnSelectedIndexChanged="RadioButtonList1_SelectedIndexChanged">
             </asp:RadioButtonList>
             <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" ControlToValidate="rblMovies" ErrorMessage="Select movie">Please select movie</asp:RequiredFieldValidator>
@@ -16,14 +21,18 @@
             <asp:Button ID="btnView" runat="server" OnClick="btnView_Click" Text="Explore" />
             <br />
             <br />
-            <asp:HyperLink ID="hlAddMovie" runat="server" NavigateUrl="AddMovieForm.aspx">Add Movie</asp:HyperLink>
-&nbsp;<asp:HyperLink ID="hlAddMovie0" runat="server" NavigateUrl="UpdateMovieForm.aspx">Update Movie</asp:HyperLink>
-            <br />
+            <asp:Panel ID="pnlAdmin" runat="server" Visible="False">
+                <asp:HyperLink ID="hlAddMovie" runat="server" NavigateUrl="AddMovieForm.aspx">Add Movie</asp:HyperLink>
+                &nbsp;<asp:HyperLink ID="hlAddMovie0" runat="server" NavigateUrl="UpdateMovieForm.aspx">Update Movie</asp:HyperLink>
+            </asp:Panel>
             <br />
             <asp:HyperLink ID="hlSchedule" runat="server" NavigateUrl="Schedule.aspx">View Schedule</asp:HyperLink>
 &nbsp;<br />
             <br />
-            <asp:HyperLink ID="hlBookings" runat="server" NavigateUrl="Bookings.aspx">View Bookings</asp:HyperLink>
+            <asp:HyperLink ID="hlBookings" runat="server" NavigateUrl="Bookings.aspx">Booking Records</asp:HyperLink>
+            <br />
+            <br />
+            <asp:Button ID="btnLogOut" runat="server" CausesValidation="False" OnClick="btn_clk_LogOut" Text="Logout" />
         </div>
     </form>
 </body>

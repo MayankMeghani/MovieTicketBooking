@@ -29,7 +29,7 @@ namespace MovieTicketBooking
         private void BindMovieSchedule(int movieId)
         {
             string connectionString = WebConfigurationManager.ConnectionStrings["MovieDbContext"].ConnectionString;
-            string query = "SELECT MovieScheduleId, ScreenId, StartTime FROM MovieSchedules WHERE MovieId = @MovieId";
+            string query = "SELECT MovieScheduleId, ScreenId, StartTime, HouseFull FROM MovieSchedules WHERE MovieId = @MovieId";
 
             using (SqlConnection con = new SqlConnection(connectionString))
             using (SqlCommand cmd = new SqlCommand(query, con))
@@ -41,10 +41,7 @@ namespace MovieTicketBooking
             }
         }
 
-        protected void gdvSchedule_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
+        
 
         protected void btnClick(object sender, GridViewCommandEventArgs e)
         {
@@ -53,49 +50,60 @@ namespace MovieTicketBooking
                 int rowIndex = Convert.ToInt32(e.CommandArgument);
                 GridViewRow row = gdvMovieSchedule.Rows[rowIndex];
                 int movieScheduleId = Convert.ToInt32(row.Cells[0].Text);
+                bool IsHouseFull = Convert.ToBoolean(gdvMovieSchedule.DataKeys[rowIndex]["HouseFull"]);
 
-                string connectionString = WebConfigurationManager.ConnectionStrings["MovieDbContext"].ConnectionString;
-                string query = @"
+                if (!IsHouseFull)
+                {
+
+                    string connectionString = WebConfigurationManager.ConnectionStrings["MovieDbContext"].ConnectionString;
+                    string query = @"
                     SELECT ms.BookedSeats, s.ScreenName AS ScreenName, s.Capacity 
                     FROM MovieSchedules ms
                     JOIN Screens s ON ms.ScreenId = s.ScreenId
                     WHERE ms.MovieScheduleId = @MovieScheduleId";
 
-                try
-                {
-                    using (SqlConnection con = new SqlConnection(connectionString))
-                    using (SqlCommand cmd = new SqlCommand(query, con))
+                    try
                     {
-                        cmd.Parameters.AddWithValue("@MovieScheduleId", movieScheduleId);
-                        con.Open();
-                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        using (SqlConnection con = new SqlConnection(connectionString))
+                        using (SqlCommand cmd = new SqlCommand(query, con))
                         {
-                            if (reader.Read())
+                            cmd.Parameters.AddWithValue("@MovieScheduleId", movieScheduleId);
+                            con.Open();
+                            using (SqlDataReader reader = cmd.ExecuteReader())
                             {
-                                int bookedSeats = Convert.ToInt32(reader["BookedSeats"]);
-                                string screenName = reader["ScreenName"].ToString();
-                                int capacity = Convert.ToInt32(reader["Capacity"]);
-                                int availableSeats = capacity - bookedSeats;
-                                Session["availableSeats"] = availableSeats;
-                                lblAvailability.Text = $"Screen Type: {screenName}, Capacity: {capacity}, Available seats: {availableSeats}";
-                                PnlBook.Visible = true;
-                                Session["SelectedMovieScheduleId"] = movieScheduleId;
+                                if (reader.Read())
+                                {
+                                    int bookedSeats = Convert.ToInt32(reader["BookedSeats"]);
+                                    string screenName = reader["ScreenName"].ToString();
+                                    int capacity = Convert.ToInt32(reader["Capacity"]);
+                                    int availableSeats = capacity - bookedSeats;
+                                    Session["availableSeats"] = availableSeats;
+                                    lblAvailability.Text = $"Screen Type: {screenName}, Capacity: {capacity}, Available seats: {availableSeats}";
+                                    PnlBook.Visible = true;
+                                    Session["SelectedMovieScheduleId"] = movieScheduleId;
 
-                            }
-                            else
-                            {
-                                lblAvailability.Text = "No data found for this schedule.";
-                                PnlBook.Visible = false;
+                                }
+                                else
+                                {
+                                    lblAvailability.Text = "No data found for this schedule.";
+                                    PnlBook.Visible = false;
 
+                                }
                             }
                         }
                     }
-                }
-                catch (Exception ex)
-                {
-                    lblAvailability.Text = "An error occurred: " + ex.Message;
-                    PnlBook.Visible = false;
+                    catch (Exception ex)
+                    {
+                        lblAvailability.Text = "An error occurred: " + ex.Message;
+                        PnlBook.Visible = false;
 
+                    }
+                }
+                else
+                {
+                    lblAvailability.Text = "Show is HouseFull";
+                    PnlBook.Visible = true;
+                    btnBook.Visible = false;
                 }
             }
         }

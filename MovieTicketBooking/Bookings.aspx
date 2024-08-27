@@ -10,9 +10,10 @@
     <form id="form1" runat="server">
         <div>
             <asp:Label ID="lblHeading" runat="server" Text="Bookings:"></asp:Label>
-            <asp:GridView ID="gdvBookings" runat="server" CellPadding="4" ForeColor="#333333" GridLines="None" OnSelectedIndexChanged="GridView1_SelectedIndexChanged" OnRowCommand="btn_clk">
+            <asp:GridView ID="gdvBookings" runat="server" CellPadding="4" ForeColor="#333333" GridLines="None" OnRowCommand="btn_clk" OnRowDataBound="gdvBookings_RowDataBound">
                 <AlternatingRowStyle BackColor="White" />
                 <Columns>
+                    
                     <asp:ButtonField AccessibleHeaderText="btn_modify" ButtonType="Button" CommandName="modify" Text="Modify" />
                 </Columns>
                 <EditRowStyle BackColor="#2461BF" />

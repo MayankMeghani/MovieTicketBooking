@@ -1,42 +1,146 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Web;
 using System.Web.Configuration;
-using System.Web.UI;
 using System.Web.UI.WebControls;
 
 namespace MovieTicketBooking
 {
     public partial class Schedule1 : System.Web.UI.Page
     {
+        SqlConnection connection;
+        SqlCommand command;
+
         protected void Page_Load(object sender, EventArgs e)
         {
+            string connectionString = WebConfigurationManager.ConnectionStrings["MovieDBContext"].ConnectionString;
+            connection = new SqlConnection(connectionString);
+            command = new SqlCommand();
+            command.Connection = connection;
+
             if (!IsPostBack)
             {
                 BindScheduleGrid();
+                string role = Session["Role"] != null ? Session["Role"].ToString().Trim() : string.Empty;
+                if(role == "admin")
+                {
+                    hlAddSchedule.Visible = true;
+                    gdvSchedule.Columns[0].Visible = true;
+                }
             }
         }
+
         private void BindScheduleGrid()
         {
-            string connectionString = WebConfigurationManager.ConnectionStrings["MovieDbContext"].ConnectionString;
-            string query = @"SELECT ms.MovieScheduleID, m.Title, m.Duration, s.ScreenName, s.Capacity,  ms.StartTime, ms.BookedSeats, ms.HouseFull FROM MovieSchedules ms 
-            JOIN  Movies m ON ms.MovieId=m.MovieId
-            JOIN Screens s ON ms.ScreenId=s.ScreenId";
-            using (SqlConnection con = new SqlConnection(connectionString))
-            using (SqlCommand cmd = new SqlCommand(query, con))
+            string query = @"
+            SELECT ms.MovieScheduleID, m.Title, m.Duration, s.ScreenId, s.ScreenName, s.Capacity, ms.StartTime, ms.BookedSeats, ms.HouseFull 
+            FROM MovieSchedules ms 
+            JOIN Movies m ON ms.MovieId = m.MovieId
+            JOIN Screens s ON ms.ScreenId = s.ScreenId";
+
+            command.CommandText = query;
+            connection.Open();
+            gdvSchedule.DataSource = command.ExecuteReader();
+            gdvSchedule.DataBind();
+            connection.Close();
+        }
+
+        protected void gdvSchedule_RowDeleting(object sender, GridViewDeleteEventArgs e)
+        {
+            // Get the MovieScheduleID from DataKeys collection
+            int movieScheduleId = Convert.ToInt32(e.Values[0]);
+
+            string query = @"DELETE FROM MovieSchedules WHERE MovieScheduleID = @MovieScheduleId";
+            command.CommandText = query;
+
+            // Clear any existing parameters
+            command.Parameters.Clear();
+            command.Parameters.AddWithValue("@MovieScheduleId", movieScheduleId);
+
+            try
             {
-                con.Open();
-                gdvSchedule.DataSource = cmd.ExecuteReader();
-                gdvSchedule.DataBind();
-                con.Close();
+                connection.Open();
+                int res = command.ExecuteNonQuery();
+                connection.Close();
+
+                if (res == 0)
+                {
+                    lblMessage.Text = "Error occurred while deleting the record.";
+                }
+                else
+                {
+                    gdvSchedule.EditIndex = -1;
+                    BindScheduleGrid();
+                    lblMessage.Text = $"Schedule with ID {movieScheduleId} was deleted successfully.";
+                }
+            }
+            catch (Exception ex)
+            {
+                lblMessage.Text = $"An error occurred: {ex.Message}";
+            }
+            finally
+            {
+            }
+        }
+
+        protected void gdvSchedule_RowEditing(object sender, GridViewEditEventArgs e)
+        {
+            gdvSchedule.EditIndex = e.NewEditIndex;
+            BindScheduleGrid();
+        }
+
+        protected void gdvSchedule_RowUpdating(object sender, GridViewUpdateEventArgs e)
+        {
+            int MovieScheduleId = Convert.ToInt32(gdvSchedule.DataKeys[e.RowIndex]["MovieScheduleId"]);
+            String StartTime = e.NewValues["StartTime"].ToString();
+            int ScreenId = Convert.ToInt32(gdvSchedule.DataKeys[e.RowIndex]["ScreenId"]);
+
+
+            string selectQuery = @"SELECT * FROM MovieSchedules WHERE ScreenId=@ScreenId AND StartTime=@StartTime";
+            command.CommandText= selectQuery;
+            command.Parameters.AddWithValue("@ScreenId", ScreenId);
+            command.Parameters.AddWithValue("@StartTime", StartTime);
+            lblMessage.Text = ScreenId + " " + StartTime;
+            connection.Open();
+            SqlDataReader reader = command.ExecuteReader();
+            if (!reader.Read())
+            {
+                reader.Close();
+                String Query = @"UPDATE MovieSchedules SET StartTime= @StartTime WHERE MovieScheduleId=@MovieScheduleId";
+                command.CommandText = Query;
+                command.Parameters.AddWithValue("@MovieScheduleId", MovieScheduleId);
+                int res = command.ExecuteNonQuery();
+
+                connection.Close();
+                if (res == 0)
+                {
+                    lblMessage.Text = "Unable update schedule";
+                }
+                else
+                {
+                    gdvSchedule.EditIndex = -1;
+                    BindScheduleGrid();
+                    lblMessage.Text = "Schedule Updated SucessFully";
+                }
+            }
+            else
+            {
+
+                connection.Close();
+                lblMessage.Text = "Schedule With same screen and Start Time is present";
             }
 
-        }
-        protected void gdvSchedule_SelectedIndexChanged(object sender, EventArgs e)
-        {
+
+
 
         }
+
+        protected void gdvSchedule_RowCancelingEdit(object sender, GridViewCancelEditEventArgs e)
+        {
+
+            gdvSchedule.EditIndex = -1;
+            BindScheduleGrid();
+        }
+
     }
 }

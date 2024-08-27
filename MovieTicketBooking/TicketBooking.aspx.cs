@@ -22,22 +22,22 @@ namespace MovieTicketBooking
 
         protected void btn_sbm_book(object sender, EventArgs e)
         {
-            int movieScheduleId = Convert.ToInt32(Session["SelectedMovieScheduleId"]); // or Session["MovieScheduleId"]
+            int movieScheduleId = Convert.ToInt32(Session["SelectedMovieScheduleId"]);
             int availableSeats = Convert.ToInt32(Session["availableSeats"]);
             string connectionString = WebConfigurationManager.ConnectionStrings["MovieDbContext"].ConnectionString;
-           
-            int noOfSeats = Convert.ToInt32(tbSeats.Text);
-            string fetchQuery = @"SELECT ms.MovieScheduleID, ms.MovieId, s.ScreenName, ms.StartTime,ms.HouseFull FROM MovieSchedules ms
-            JOIN Screens s ON s.ScreenId=ms.ScreenId
-            WHERE MovieScheduleId = @MovieScheduleId";
 
-            string insertQuery = @"INSERT INTO Bookings (MovieId, ScreenName,StartTime,NoOfSeats,Status)
-            VALUES (@MovieId, @ScreenName,@StartTime,@NoOfSeats,'Booked')";
+            int noOfSeats = Convert.ToInt32(tbSeats.Text);
+            string fetchQuery = @"SELECT ms.MovieScheduleID, ms.MovieId, s.ScreenName, ms.StartTime, ms.HouseFull FROM MovieSchedules ms
+                          JOIN Screens s ON s.ScreenId = ms.ScreenId
+                          WHERE MovieScheduleId = @MovieScheduleId";
+
+            string insertQuery = @"INSERT INTO Bookings (MovieId, ScreenName, StartTime, NoOfSeats, Status)
+                           VALUES (@MovieId, @ScreenName, @StartTime, @NoOfSeats, 'Booked','@UserId')";
 
             string updateQuery = @"UPDATE MovieSchedules
-            SET BookedSeats = BookedSeats + @SeatsTobeBook,
-            HouseFull = @isHousefull
-            WHERE MovieScheduleId = @MovieScheduleId;";
+                           SET BookedSeats = BookedSeats + @SeatsToBeBooked,
+                               HouseFull = @isHouseFull
+                           WHERE MovieScheduleId = @MovieScheduleId;";
 
             try
             {
@@ -51,38 +51,39 @@ namespace MovieTicketBooking
                     if (reader.Read())
                     {
                         int movieId = Convert.ToInt32(reader["MovieId"]);
-                        int screenName = Convert.ToInt32(reader["ScreenName"]);
+                        string screenName = reader["ScreenName"].ToString();
                         string startTime = reader["StartTime"].ToString();
-                        reader.Close(); // Close the reader before executing the insert command
+                        reader.Close(); 
 
-                        // Insert into Bookings table
+
                         using (SqlCommand insertCmd = new SqlCommand(insertQuery, con))
                         {
                             insertCmd.Parameters.AddWithValue("@MovieId", movieId);
                             insertCmd.Parameters.AddWithValue("@ScreenName", screenName);
                             insertCmd.Parameters.AddWithValue("@StartTime", startTime);
-                            insertCmd.Parameters.AddWithValue("@NoofSeats", noOfSeats);
-                            //insertCmd.Parameters.AddWithValue("@BookingDate", DateTime.Now);
-
+                            insertCmd.Parameters.AddWithValue("@NoOfSeats", noOfSeats);
+                            insertCmd.Parameters.AddWithValue("@UserId", Session["UserId"].ToString());
                             int rowsAffected = insertCmd.ExecuteNonQuery();
                             if (rowsAffected > 0)
                             {
+                                bool isHouseFull = (noOfSeats == availableSeats);
 
-                                string isHouseFull = (noOfSeats==availableSeats)?"true":"false";
-                                using (SqlCommand updateCmd=new SqlCommand(updateQuery, con))
+                                using (SqlCommand updateCmd = new SqlCommand(updateQuery, con))
                                 {
-                                    updateCmd.Parameters.AddWithValue("@SeatsTobeBook",noOfSeats);
-                                    updateCmd.Parameters.AddWithValue("@HouseFull", isHouseFull);
-                                    updateCmd.Parameters.AddWithValue("@MovieScheduleId",movieScheduleId);
+                                    updateCmd.Parameters.AddWithValue("@SeatsToBeBooked", noOfSeats);
+                                    updateCmd.Parameters.AddWithValue("@isHouseFull", isHouseFull ? 1 : 0); // Set bit value (1 for true, 0 for false)
+                                    updateCmd.Parameters.AddWithValue("@MovieScheduleId", movieScheduleId);
 
-                                    int row = updateCmd.ExecuteNonQuery();
-                                    lblMessage.Text = rowsAffected > 0 ? "Booking successful!" : "Booking failed!";
+                                    int updateRows = updateCmd.ExecuteNonQuery();
+                                    lblMessage.Text = updateRows > 0 ? "Booking successful!" : "Booking failed!";
                                     lblMessage.Visible = true;
                                 }
                             }
-
-                            lblMessage.Text = rowsAffected > 0 ? "Booking successful!" : "Booking failed!";
-                            lblMessage.Visible = true;
+                            else
+                            {
+                                lblMessage.Text = "Booking failed!";
+                                lblMessage.Visible = true;
+                            }
                         }
                     }
                     else

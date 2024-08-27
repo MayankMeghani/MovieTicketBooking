@@ -68,14 +68,17 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="AddMovieForm.aspx" />
+    <Content Include="AddSchedule.aspx" />
     <Content Include="App_Data\Database.mdf" />
     <Content Include="App_Data\Database_log.ldf">
       <DependentUpon>Database.mdf</DependentUpon>
     </Content>
     <Content Include="Bookings.aspx" />
     <Content Include="HomePage.aspx" />
+    <Content Include="LoginPage.aspx" />
     <Content Include="MovieSchedule.aspx" />
     <Content Include="Schedule.aspx" />
+    <Content Include="SignUpPage.aspx" />
     <Content Include="TicketBooking.aspx" />
     <Content Include="UpdateMovieForm.aspx" />
     <Content Include="Web.config" />
@@ -87,6 +90,13 @@
     </Compile>
     <Compile Include="AddMovieForm.aspx.designer.cs">
       <DependentUpon>AddMovieForm.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AddSchedule.aspx.cs">
+      <DependentUpon>AddSchedule.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AddSchedule.aspx.designer.cs">
+      <DependentUpon>AddSchedule.aspx</DependentUpon>
     </Compile>
     <Compile Include="Bookings.aspx.cs">
       <DependentUpon>Bookings.aspx</DependentUpon>
@@ -102,12 +112,26 @@
     <Compile Include="HomePage.aspx.designer.cs">
       <DependentUpon>HomePage.aspx</DependentUpon>
     </Compile>
+    <Compile Include="LoginPage.aspx.cs">
+      <DependentUpon>LoginPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="LoginPage.aspx.designer.cs">
+      <DependentUpon>LoginPage.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Schedule.aspx.cs">
       <DependentUpon>Schedule.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Schedule.aspx.designer.cs">
       <DependentUpon>Schedule.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="SignUpPage.aspx.cs">
+      <DependentUpon>SignUpPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SignUpPage.aspx.designer.cs">
+      <DependentUpon>SignUpPage.aspx</DependentUpon>
     </Compile>
     <Compile Include="TicketBooking.aspx.cs">
       <DependentUpon>TicketBooking.aspx</DependentUpon>

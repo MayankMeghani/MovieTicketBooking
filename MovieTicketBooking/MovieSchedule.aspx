@@ -11,7 +11,9 @@
         <div>
             <asp:Label ID="lblTitle" runat="server" Text="Label"></asp:Label>
             <br />
-            <asp:GridView ID="gdvMovieSchedule" runat="server" OnSelectedIndexChanged="gdvSchedule_SelectedIndexChanged" BackColor="White" BorderColor="#336666" BorderStyle="Double" BorderWidth="3px" CellPadding="4" GridLines="Horizontal" OnRowCommand="btnClick" AutoGenerateColumns="False">
+            <asp:GridView ID="gdvMovieSchedule" runat="server" 
+                BackColor="White" BorderColor="#336666" BorderStyle="Double" BorderWidth="3px" CellPadding="4" GridLines="Horizontal" 
+                OnRowCommand="btnClick" AutoGenerateColumns="False" DataKeyNames="MovieScheduleId,HouseFull">
                 <Columns>
                     <asp:BoundField DataField="MovieScheduleId" HeaderText="Id" SortExpression="MovieScheduleId" />
                     <asp:BoundField DataField="ScreenId" HeaderText="Screen Id" SortExpression="ScreenId" />

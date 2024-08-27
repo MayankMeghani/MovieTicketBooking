@@ -15,6 +15,7 @@ namespace MovieTicketBooking
         {
             if (!IsPostBack)
             {
+                lblWelcome.Text = "Welcome, " + Session["UserName"].ToString();
                 SqlConnection con = new SqlConnection();
                 con.ConnectionString = WebConfigurationManager.ConnectionStrings["MovieDbContext"].ConnectionString;
                 SqlCommand cmd = con.CreateCommand();
@@ -30,6 +31,12 @@ namespace MovieTicketBooking
 
                 }
                 con.Close();
+                string role = Session["Role"] != null ? Session["Role"].ToString().Trim() : string.Empty;
+
+                if (role == "admin")
+                {
+                    pnlAdmin.Visible= true;
+                }
             }
         }
 
@@ -48,5 +55,11 @@ namespace MovieTicketBooking
                 Response.Redirect("MovieSchedule.aspx");
         }
 
+        protected void btn_clk_LogOut(object sender, EventArgs e)
+        {
+            Session.Clear();
+            Session.Abandon();
+            Response.Redirect("LoginPage.aspx");
+        }
     }
 }
