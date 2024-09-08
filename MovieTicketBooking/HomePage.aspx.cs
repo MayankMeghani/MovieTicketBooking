@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Text;
 using System.Web;
 using System.Web.Configuration;
 using System.Web.UI;
@@ -16,43 +17,64 @@ namespace MovieTicketBooking
             if (!IsPostBack)
             {
                 lblWelcome.Text = "Welcome, " + Session["UserName"].ToString();
-                SqlConnection con = new SqlConnection();
-                con.ConnectionString = WebConfigurationManager.ConnectionStrings["MovieDbContext"].ConnectionString;
-                SqlCommand cmd = con.CreateCommand();
-                cmd.CommandText = "select * from Movies";
-                con.Open();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
-                {
-                    ListItem item = new ListItem();
-                    item.Text = reader["Title"].ToString();
-                    item.Value = reader["MovieId"].ToString();
-                    rblMovies.Items.Add(item);
-
-                }
-                con.Close();
-                string role = Session["Role"] != null ? Session["Role"].ToString().Trim() : string.Empty;
-
-                if (role == "admin")
-                {
-                    pnlAdmin.Visible= true;
-                }
+                LoadMovies();
+                CheckAdminRole();
             }
         }
 
-        protected void RadioButtonList1_SelectedIndexChanged(object sender, EventArgs e)
+        private void LoadMovies()
         {
+            string connectionString = WebConfigurationManager.ConnectionStrings["MovieDbContext"].ConnectionString;
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                SqlCommand cmd = new SqlCommand("SELECT * FROM Movies", con);
+                con.Open();
+                SqlDataReader reader = cmd.ExecuteReader();
+                StringBuilder movieList = new StringBuilder();
 
+                while (reader.Read())
+                {
+                    string movieId = reader["MovieId"].ToString();
+                    string title = reader["Title"].ToString();
+                    string poster = reader["Poster"].ToString();
+                    string posterUrl = ResolveUrl("~/UploadedPhotos/" + poster);
+
+                    movieList.Append("<div class='movie-item'>");
+                    movieList.Append($"<label for='movie_{movieId}'>");
+                    movieList.Append($"<img src='{posterUrl}' alt='{title}' style='width:100px;height:auto;' />");
+                    movieList.Append("<br>");
+                    movieList.Append($"<input type='radio' id='movie_{movieId}' name='rblMovies' value='{movieId}' />");
+                    movieList.Append($"<input type='hidden' id='title_{movieId}' name='title_{movieId}' value='{title}' />");
+                    movieList.Append($"<span>{title}</span>");
+                    movieList.Append("</label>");
+                    movieList.Append("</div>");
+                }
+
+                ltlMovieList.Text = movieList.ToString();
+            }
+        }
+
+        private void CheckAdminRole()
+        {
+            string role = Session["Role"] as string;
+            pnlAdmin.Visible = (role?.Trim() == "admin");
         }
 
         protected void btnView_Click(object sender, EventArgs e)
         {
-                string selectedMovieName = rblMovies.SelectedItem.Text;
-                string selectedMovieId=rblMovies.SelectedValue;
-                Session["MovieName"] = selectedMovieName;
+            string selectedMovieId = Request.Form["rblMovies"];
+            if (!string.IsNullOrEmpty(selectedMovieId))
+            {
+                string selectedMovieTitle = Request.Form[$"title_{selectedMovieId}"];
                 Session["MovieId"] = selectedMovieId;
-
+                Session["MovieName"] = selectedMovieTitle;
                 Response.Redirect("MovieSchedule.aspx");
+            }
+            else
+            {
+                // Consider adding a label to display this message
+                // lblMessage.Text = "Please select a movie.";
+            }
         }
 
         protected void btn_clk_LogOut(object sender, EventArgs e)
@@ -61,5 +83,6 @@ namespace MovieTicketBooking
             Session.Abandon();
             Response.Redirect("LoginPage.aspx");
         }
+
     }
 }

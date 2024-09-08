@@ -142,5 +142,9 @@ namespace MovieTicketBooking
             BindScheduleGrid();
         }
 
+        protected void gdvSchedule_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

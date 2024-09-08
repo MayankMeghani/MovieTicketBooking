@@ -14,8 +14,9 @@
             <br />
             <asp:Label ID="lblHeading" runat="server" Text="Movies"></asp:Label>
             <br />
-            <asp:RadioButtonList ID="rblMovies" runat="server" OnSelectedIndexChanged="RadioButtonList1_SelectedIndexChanged">
+            <asp:RadioButtonList ID="rblMovies" runat="server">
             </asp:RadioButtonList>
+            <asp:Literal ID="ltlMovieList" runat="server"></asp:Literal>
             <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" ControlToValidate="rblMovies" ErrorMessage="Select movie">Please select movie</asp:RequiredFieldValidator>
             <br />
             <asp:Button ID="btnView" runat="server" OnClick="btnView_Click" Text="Explore" />

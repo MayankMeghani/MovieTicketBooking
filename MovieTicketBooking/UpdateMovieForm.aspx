@@ -29,9 +29,13 @@
                 <asp:Label ID="lblDate" runat="server" Text="Release Date"></asp:Label>
                 &nbsp;<asp:TextBox ID="tbDate" runat="server" TextMode="Date"></asp:TextBox>
                 <br />
+                <asp:FileUpload ID="FileUpload" runat="server" />
+                &nbsp;<asp:Button ID="btn_preview" runat="server" OnClick="btn_clk_preview" Text="Preview" />
+                <br />
+                <asp:Image ID="imgPoster" runat="server" Width="100px" />
+                <br />
                 <asp:Label ID="lblActive" runat="server" Text="Is Active"></asp:Label>
-                &nbsp;
-                <asp:RadioButtonList ID="rblActive" runat="server">
+&nbsp;&nbsp;<asp:RadioButtonList ID="rblActive" runat="server">
                     <asp:ListItem Value="True">Yes</asp:ListItem>
                     <asp:ListItem Value="False">No</asp:ListItem>
                 </asp:RadioButtonList>

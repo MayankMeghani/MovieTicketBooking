@@ -23,6 +23,9 @@
         <asp:Label ID="lblDate" runat="server" Text="Release Date"></asp:Label>
 &nbsp;<asp:TextBox ID="tbDate" runat="server" TextMode="Date"></asp:TextBox>
         <br />
+        Poster
+        <asp:FileUpload ID="FileUpload" runat="server" OnDataBinding="btn_sbt_add" />
+        <br />
         <br />
         <asp:Button ID="btnAdd" runat="server" Text="Add Movie" OnClick="btn_sbt_add" />
         <br />
